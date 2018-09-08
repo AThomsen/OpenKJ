@@ -83,6 +83,7 @@ DlgSettings::DlgSettings(AbstractAudioBackend *AudioBackend, AbstractAudioBacken
         ui->listWidgetMonitors->item(settings->cdgWindowFullScreenMonitor())->setSelected(true);
     else
         settings->setCdgWindowFullscreen(false);
+    ui->checkBoxCdgSmoothScaling->setChecked(settings->cdgSmoothScaling());
     ui->spinBoxTickerHeight->setValue(settings->tickerHeight());
     ui->horizontalSliderTickerSpeed->setValue(settings->tickerSpeed());
     QString ss = ui->pushButtonTextColor->styleSheet();
@@ -582,6 +583,11 @@ void DlgSettings::on_checkBoxCdgFullscreen_toggled(bool checked)
     settings->setCdgWindowFullscreen(checked);
 }
 
+void DlgSettings::on_checkBoxCdgSmoothScaling_toggled(bool checked)
+{
+    settings->setCdgSmoothScaling(checked);
+}
+
 void DlgSettings::on_checkBoxShowKAAAlert_toggled(bool checked)
 {
     settings->setKaraokeAAAlertEnabled(checked);
@@ -733,3 +739,4 @@ void DlgSettings::reqSvrTestPassed()
     msgBox.setText("Request server connection test was successful.  Server info and API key appear to be valid");
     msgBox.exec();
 }
+

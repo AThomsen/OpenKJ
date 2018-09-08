@@ -62,6 +62,7 @@ public:
     explicit Settings(QObject *parent = 0);
     bool cdgWindowFullscreen();
     bool showCdgWindow();
+    bool cdgSmoothScaling();
     void setCdgWindowFullscreenMonitor(int monitor);
     int  cdgWindowFullScreenMonitor();
     bool controlBreakMusic();
@@ -245,6 +246,7 @@ signals:
     void cdgShowCdgWindowChanged(bool show);
     void cdgWindowFullscreenChanged(bool fullscreen);
     void cdgWindowFullscreenMonitorChanged(int monitor);
+    void cdgSmoothScalingChanged(bool smoothScaling);
     void cdgHSizeAdjustmentChanged(int pixels);
     void cdgVSizeAdjustmentChanged(int pixels);
     void cdgHOffsetChanged(int pixels);
@@ -292,6 +294,7 @@ public slots:
     void setBmKCrossfade(bool enabled);
     void setShowCdgWindow(bool show);
     void setCdgWindowFullscreen(bool fullScreen);
+    void setCdgSmoothScaling(bool smoothScaling);
     void setCdgHSizeAdjustment(int pixels);
     void setCdgVSizeAdjustment(int pixels);
     void setCdgHOffset(int pixels);

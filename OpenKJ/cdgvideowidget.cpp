@@ -51,6 +51,11 @@ void CdgVideoWidget::arResize(int w)
     this->adjustSize();
 }
 
+void CdgVideoWidget::setSmoothScaling(bool smoothScaling)
+{
+    this->smoothScaling = smoothScaling;
+}
+
 
 void CdgVideoWidget::resizeEvent(QResizeEvent *event)
 {
@@ -97,6 +102,8 @@ void CdgVideoWidget::paintEvent(QPaintEvent *event)
             foreach (const QRect &rect, region.rects())
                 painter.fillRect(rect, brush);
         }
+
+        painter.setRenderHint(this->smoothScaling ? QPainter::SmoothPixmapTransform : QPainter::Antialiasing);
 
         surface->paint(&painter);
     } else {

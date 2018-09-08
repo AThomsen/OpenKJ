@@ -99,7 +99,6 @@ void CdgVideoSurface::paint(QPainter *painter)
 {
     if (currentFrame.map(QAbstractVideoBuffer::ReadOnly)) {
         const QTransform oldTransform = painter->transform();
-        painter->setRenderHint(QPainter::Antialiasing);
         if (surfaceFormat().scanLineDirection() == QVideoSurfaceFormat::BottomToTop) {
            painter->scale(1, -1);
            painter->translate(0, -widget->height());

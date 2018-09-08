@@ -170,7 +170,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="audioPage">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -400,6 +400,16 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="checkBoxCdgSmoothScaling">
+              <property name="toolTip">
+               <string extracomment="Smooth the CDG image so it looks less blocky. Requires a bit more CPU."/>
+              </property>
+              <property name="text">
+               <string>Smooth scaling</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBoxMonitors">
               <property name="enabled">
                <bool>true</bool>
@@ -539,7 +549,7 @@
                 <item>
                  <widget class="QRadioButton" name="rbBgImage">
                   <property name="text">
-                   <string>Background Image</string>
+                   <string>Bac&amp;kground Image</string>
                   </property>
                  </widget>
                 </item>
@@ -906,7 +916,7 @@ QPushButton:default {
             <item>
              <widget class="QGroupBox" name="groupBoxRequestServer">
               <property name="title">
-               <string>Use request server</string>
+               <string>Use re&amp;quest server</string>
               </property>
               <property name="checkable">
                <bool>true</bool>

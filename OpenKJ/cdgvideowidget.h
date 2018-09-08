@@ -25,9 +25,12 @@ public:
     void clear();
     void setKeepAspect(bool keep);
     void arResize(int w);
+    void setSmoothScaling(bool smoothScaling);
+
 private:
     CdgVideoSurface *surface;
     bool keepAspect;
+    bool smoothScaling;
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);

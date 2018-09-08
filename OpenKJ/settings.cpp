@@ -234,6 +234,18 @@ void Settings::setShowCdgWindow(bool show)
     emit cdgShowCdgWindowChanged(show);
 }
 
+bool Settings::cdgSmoothScaling()
+{
+    return settings->value("cdgSmoothScaling", false).toBool();
+}
+
+void Settings::setCdgSmoothScaling(bool smoothScaling)
+{
+    settings->setValue("cdgSmoothScaling", smoothScaling);
+    emit cdgSmoothScalingChanged(smoothScaling);
+}
+
+
 void Settings::setCdgWindowFullscreenMonitor(int monitor)
 {
     settings->setValue("cdgWindowFullScreenMonitor", monitor);

@@ -85,6 +85,7 @@ private slots:
 public slots:
     void setFullScreen(bool fullscreen);
     void setFullScreenMonitor(int monitor);
+    void setCdgSmoothScaling(bool smoothScale);
     void tickerFontChanged();
     void tickerHeightChanged();
     void tickerSpeedChanged();

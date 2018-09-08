@@ -83,6 +83,7 @@ DlgCdg::DlgCdg(AbstractAudioBackend *KaraokeBackend, AbstractAudioBackend *Break
     connect(settings, SIGNAL(cdgShowCdgWindowChanged(bool)), this, SLOT(setVisible(bool)));
     connect(settings, SIGNAL(cdgWindowFullscreenChanged(bool)), this, SLOT(setFullScreen(bool)));
     connect(settings, SIGNAL(cdgWindowFullscreenMonitorChanged(int)), this, SLOT(setFullScreenMonitor(int)));
+    connect(settings, SIGNAL(cdgSmoothScalingChanged(bool)), this, SLOT(setCdgSmoothScaling(bool)));
     connect(ui->cdgVideo, SIGNAL(resized(QSize)), this, SLOT(cdgSurfaceResized(QSize)));
     connect(settings, SIGNAL(karaokeAAAlertFontChanged(QFont)), this, SLOT(alertFontChanged(QFont)));
     fullScreenTimer = new QTimer(this);
@@ -100,6 +101,7 @@ DlgCdg::DlgCdg(AbstractAudioBackend *KaraokeBackend, AbstractAudioBackend *Break
         show();
     else
         hide();
+    setCdgSmoothScaling(settings->cdgSmoothScaling());
     setShowBgImage(true);
     slideShowTimerTimeout();
     showAlert(false);
@@ -192,6 +194,11 @@ void DlgCdg::setFullScreenMonitor(int monitor)
         makeWindowed();
         makeFullscreen();
     }
+}
+
+void DlgCdg::setCdgSmoothScaling(bool smoothScale)
+{
+    ui->cdgVideo->setSmoothScaling(smoothScale);
 }
 
 void DlgCdg::tickerFontChanged()
