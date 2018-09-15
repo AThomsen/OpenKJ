@@ -261,7 +261,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(requestsDialog, SIGNAL(addRequestSong(int,int)), qModel, SLOT(songAdd(int,int)));
     connect(settings, SIGNAL(tickerCustomStringChanged()), this, SLOT(rotationDataChanged()));
     qWarning() << "Setting backgrounds on CDG displays";
-    ui->cdgVideoWidget->setKeepAspect(true);
     cdgWindow->setShowBgImage(true);
     setShowBgImage(true);
     qWarning() << "Restoring window and listview states";
@@ -1121,8 +1120,9 @@ void MainWindow::audioBackend_positionChanged(qint64 position)
                 unsigned char* rgbdata;
                 rgbdata = cdg->GetImageByTime(position + cdgOffset);
                 QImage img(rgbdata, 300, 216, QImage::Format_RGB888);
-                ui->cdgVideoWidget->videoSurface()->present(QVideoFrame(img));
-                cdgWindow->updateCDG(img);
+                QImage clone = img.copy();
+                ui->cdgVideoWidget->present(clone);
+                cdgWindow->updateCDG(clone);
                 free(rgbdata);
         }
         if (!sliderPositionPressed)
@@ -1741,7 +1741,7 @@ void MainWindow::setShowBgImage(bool show)
         QPainter painter(&bgImage);
         QSvgRenderer renderer(QString(":icons/Icons/okjlogo.svg"));
         renderer.render(&painter);
-        ui->cdgVideoWidget->videoSurface()->present(QVideoFrame(bgImage));
+        ui->cdgVideoWidget->present(bgImage);
     }
 }
 
@@ -2300,8 +2300,8 @@ void MainWindow::videoFrameReceived(QImage frame, QString backendName)
 {
     if (backendName == "break" && kAudioBackend->state() == AbstractAudioBackend::PlayingState)
         return;
-    //QImage img = frame.copy();
-    ui->cdgVideoWidget->videoSurface()->present(QVideoFrame(frame));
+
+    ui->cdgVideoWidget->present(frame);
     cdgWindow->updateCDG(frame);
 }
 

@@ -275,8 +275,6 @@
         <file>bmplitemdelegate.h</file>
         <file>bmpltablemodel.cpp</file>
         <file>bmpltablemodel.h</file>
-        <file>cdgvideosurface.cpp</file>
-        <file>cdgvideosurface.h</file>
         <file>cdgvideowidget.cpp</file>
         <file>cdgvideowidget.h</file>
         <file>customlineedit.cpp</file>

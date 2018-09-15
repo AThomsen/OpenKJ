@@ -223,8 +223,7 @@ int AudioBackendGstreamer::volume()
 qint64 AudioBackendGstreamer::position()
 {
     gint64 pos;
-    GstFormat fmt = GST_FORMAT_TIME;
-    if (gst_element_query_position (playBin, fmt, &pos))
+    if (gst_element_query_position (playBin, GST_FORMAT_TIME, &pos))
     {
         return pos / 1000000;
     }
@@ -239,8 +238,7 @@ bool AudioBackendGstreamer::isMuted()
 qint64 AudioBackendGstreamer::duration()
 {
     gint64 duration;
-    GstFormat fmt = GST_FORMAT_TIME;
-    if (gst_element_query_duration (playBin, fmt, &duration))
+    if (gst_element_query_duration (playBin, GST_FORMAT_TIME, &duration))
     {
         return duration / 1000000;
     }
@@ -381,17 +379,20 @@ void AudioBackendGstreamer::stop(bool skipFade)
 void AudioBackendGstreamer::fastTimer_timeout()
 {
     static int curDuration;
-    if (duration() != curDuration)
+    qint64 dur = duration();
+    if (dur != curDuration)
     {
-        emit durationChanged(duration());
-        curDuration = duration();
+        qWarning() << objName << " - duration changed: " << dur;
+        emit durationChanged(dur);
+        curDuration = dur;
     }
     static int curPosition;
     if(state() == AbstractAudioBackend::PlayingState)
     {
-        if (position() != curPosition)
-            emit positionChanged(position());
-        curPosition = position();
+        quint64 pos = position();
+        if (pos != curPosition)
+            emit positionChanged(pos);
+        curPosition = pos;
     }
     gdouble curVolume;
     g_object_get(G_OBJECT(volumeElement), "volume", &curVolume, NULL);
@@ -789,6 +790,7 @@ bool AudioBackendGstreamer::canDownmix()
     return true;
 }
 
+
 void AudioBackendGstreamer::newFrame()
 {
     GstSample* sample = gst_app_sink_pull_sample((GstAppSink*)videoAppSink);
@@ -807,8 +809,8 @@ void AudioBackendGstreamer::newFrame()
         GstMapInfo bufferInfo;
         gst_buffer_map(buffer,&bufferInfo,GST_MAP_READ);
         guint8 *rawFrame = bufferInfo.data;
-        QImage frame = QImage(rawFrame,width,height,QImage::Format_RGBX8888);
-        emit newVideoFrame(frame, getName());
+        QImage frame = QImage(rawFrame, width, height, QImage::Format_RGBX8888);
+        emit newVideoFrame(frame.copy(), getName());
         gst_buffer_unmap(buffer, &bufferInfo);
         gst_sample_unref(sample);
     }

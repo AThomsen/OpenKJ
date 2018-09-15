@@ -26,7 +26,6 @@
 #include <QMouseEvent>
 #include "settings.h"
 #include "scrolltext.h"
-#include "cdgvideowidget.h"
 #include <QTimer>
 #include "abstractaudiobackend.h"
 

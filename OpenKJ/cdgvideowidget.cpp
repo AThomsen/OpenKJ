@@ -8,26 +8,19 @@
 extern Settings *settings;
 
 #ifdef USE_GL
-CdgVideoWidget::CdgVideoWidget(QWidget *parent) : QGLWidget(parent) , surface(0)
+CdgVideoWidget::CdgVideoWidget(QWidget *parent) : QGLWidget(parent)
 #else
 CdgVideoWidget::CdgVideoWidget(QWidget *parent) : QWidget(parent) , surface(0)
 #endif
 {
-    keepAspect = false;
     setUpdatesEnabled(true);
     setAutoFillBackground(false);
     setAttribute(Qt::WA_NoSystemBackground, true);
     QPalette palette = this->palette();
     palette.setColor(QPalette::Background, Qt::black);
     setPalette(palette);
-   // setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    surface = new CdgVideoSurface(this);
 }
 
-CdgVideoWidget::~CdgVideoWidget()
-{
-         delete surface;
-}
 
 QSize CdgVideoWidget::sizeHint() const
 {
@@ -36,12 +29,7 @@ QSize CdgVideoWidget::sizeHint() const
 
 void CdgVideoWidget::clear()
 {
-    surface->blankImage();
-}
-
-void CdgVideoWidget::setKeepAspect(bool keep)
-{
-    keepAspect = keep;
+    present(QImage());
 }
 
 void CdgVideoWidget::arResize(int w)
@@ -56,59 +44,44 @@ void CdgVideoWidget::setSmoothScaling(bool smoothScaling)
     this->smoothScaling = smoothScaling;
 }
 
+void CdgVideoWidget::present(QImage frame)
+{
+    this->frameMutex.lock();
+    this->currentFrame = frame;
+    this->frameMutex.unlock();
+    this->update();
+}
+
 
 void CdgVideoWidget::resizeEvent(QResizeEvent *event)
 {
-
-//    if (keepAspect)
-//    {
-//        event->accept();
-//        int width = event->size().width();
-//        int newHeight = width * 0.5625;
-//        if (event->size() == QSize(width, newHeight))
-//            return;
-//        QWidget::resize(width, newHeight);
-//        //    if(event->size().width() > event->size().height()){
-//        //        QWidget::resize(event->size().height(),event->size().height());
-//        //    }else{
-//        //        QWidget::resize(event->size().width(),event->size().width());
-//        //    }
-//        //    QWidget::resizeEvent(event);
-//        qWarning() << "Width: " << width << " target height: " << newHeight;
-//        emit resized(QSize(event->size().width(), event->size().height() * 0.5625));
-//        surface->updateVideoRect();
-//        emit resizeEvent(new QResizeEvent(QSize(width, newHeight), event->size()));
-//    }
-//    else
-//    {
-        QWidget::resizeEvent(event);
-        surface->updateVideoRect();
-        emit resized(event->size());
-//    }
-//    //    if (keepAspect)
-// //        resize(width, newHeight);
-
+    QWidget::resizeEvent(event);
+    emit resized(event->size());
+    update();
 }
 
 void CdgVideoWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    if (surface->isActive()) {
-        const QRect videoRect = surface->videoRect();
-        if (!videoRect.contains(event->rect())) {
-            QRegion region = event->region();
-         //   region.subtracted(videoRect);
-            QBrush brush = palette().background();
-            foreach (const QRect &rect, region.rects())
-                painter.fillRect(rect, brush);
-        }
 
+    this->frameMutex.lock();
+    if(!this->currentFrame.isNull())
+    {
         painter.setRenderHint(this->smoothScaling ? QPainter::SmoothPixmapTransform : QPainter::Antialiasing);
-
-        surface->paint(&painter);
-    } else {
-        painter.fillRect(event->rect(), palette().background());
+        QRect rect = painter.viewport();
+        QSize size = this->currentFrame.size();
+        size.scale(rect.size(), Qt::KeepAspectRatio);
+        QRect targetRect = QRect(rect.topLeft(), size);
+        targetRect.moveCenter(rect.center());
+        painter.setViewport(targetRect);
+        painter.setWindow(this->currentFrame.rect());
+        painter.drawImage(0, 0, this->currentFrame);
     }
+    else
+    {
+        painter.fillRect(event->rect(), QBrush(Qt::black));
+    }
+    this->frameMutex.unlock();
 }
 
 

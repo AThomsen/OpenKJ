@@ -92,7 +92,7 @@ DlgCdg::DlgCdg(AbstractAudioBackend *KaraokeBackend, AbstractAudioBackend *Break
     connect(slideShowTimer, SIGNAL(timeout()), this, SLOT(slideShowTimerTimeout()));
     slideShowTimer->start(15000);
     fullScreenTimer->setInterval(500);
-    ui->cdgVideo->videoSurface()->start();
+    //ui->cdgVideo->videoSurface()->start();
     if ((settings->cdgWindowFullscreen()) && (settings->showCdgWindow()))
     {
         makeFullscreen();
@@ -143,7 +143,7 @@ void DlgCdg::updateCDG(QImage image, bool overrideVisibleCheck)
      //       ui->cdgVideo->videoSurface()->present(QVideoFrame(image));
      //       ui->cdgVideo->videoSurface()->present(QVideoFrame(image.scaled(ui->cdgVideo->size(), Qt::IgnoreAspectRatio)));
      //   else
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(image));
+            ui->cdgVideo->present(image);
     }
 }
 
@@ -291,14 +291,14 @@ void DlgCdg::setShowBgImage(bool show)
         if (bAudioBackend->state() == AbstractAudioBackend::PlayingState && bAudioBackend->hasVideo())
             return;
         if (settings->cdgDisplayBackgroundImage() != QString::null)
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(QImage(settings->cdgDisplayBackgroundImage())));
+            ui->cdgVideo->present(QImage(settings->cdgDisplayBackgroundImage()));
         else
         {
             QImage bgImage(ui->cdgVideo->size(), QImage::Format_ARGB32);
             QPainter painter(&bgImage);
             QSvgRenderer renderer(QString(":icons/Icons/okjlogo.svg"));
             renderer.render(&painter);
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(bgImage));
+            ui->cdgVideo->present(bgImage);
         }
 
     }
@@ -306,6 +306,7 @@ void DlgCdg::setShowBgImage(bool show)
 
 void DlgCdg::cdgSurfaceResized(QSize size)
 {
+    // TODO: this shows background image on every resize. BUG!
     Q_UNUSED(size)
     setShowBgImage(true);
 }
@@ -434,7 +435,7 @@ void DlgCdg::slideShowTimerTimeout()
             QPainter painter(&bgImage);
             QSvgRenderer renderer(QString(":icons/Icons/okjlogo.svg"));
             renderer.render(&painter);
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(bgImage));
+            ui->cdgVideo->present(bgImage);
             return;
         }
         if (position >= images.size())
@@ -445,10 +446,10 @@ void DlgCdg::slideShowTimerTimeout()
             QPainter painter(&bgImage);
             QSvgRenderer renderer(images.at(position).absoluteFilePath());
             renderer.render(&painter);
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(bgImage));
+            ui->cdgVideo->present(bgImage);
         }
         else
-            ui->cdgVideo->videoSurface()->present(QVideoFrame(QImage(images.at(position).absoluteFilePath())));
+            ui->cdgVideo->present(QImage(images.at(position).absoluteFilePath()));
         position++;
 
     }

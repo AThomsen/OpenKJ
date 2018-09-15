@@ -140,7 +140,6 @@ SOURCES += main.cpp\
     queueitemdelegate.cpp \
     regitemdelegate.cpp \
     okarchive.cpp \
-    cdgvideosurface.cpp \
     cdgvideowidget.cpp \
     abstractaudiobackend.cpp \
     audiobackendgstreamer.cpp \
@@ -310,7 +309,6 @@ HEADERS  += mainwindow.h \
     queueitemdelegate.h \
     regitemdelegate.h \
     okarchive.h \
-    cdgvideosurface.h \
     cdgvideowidget.h \
     abstractaudiobackend.h \
     audiobackendgstreamer.h \

@@ -1,14 +1,13 @@
 #ifndef CDGVIDEOWIDGET_H
 #define CDGVIDEOWIDGET_H
 
-#include "cdgvideosurface.h"
 #ifdef USE_GL
     #include <QGLWidget>
 #else
     #include <QWidget>
 #endif
 #include "settings.h"
-
+#include <QMutex>
 
 #ifdef USE_GL
 class CdgVideoWidget : public QGLWidget
@@ -19,17 +18,16 @@ class CdgVideoWidget : public QWidget
     Q_OBJECT
 public:
     explicit CdgVideoWidget(QWidget *parent = 0);
-    ~CdgVideoWidget();
-    CdgVideoSurface *videoSurface() const { return surface; }
     QSize sizeHint() const;
     void clear();
     void setKeepAspect(bool keep);
     void arResize(int w);
     void setSmoothScaling(bool smoothScaling);
+    void present(QImage frame);
 
 private:
-    CdgVideoSurface *surface;
-    bool keepAspect;
+    QImage currentFrame;
+    QMutex frameMutex;
     bool smoothScaling;
 protected:
     void paintEvent(QPaintEvent *event);
